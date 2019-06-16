@@ -5,28 +5,18 @@ use std::thread;
 use std::sync::{mpsc, Arc, Mutex};
 use std::time::Duration;
 use core_src::ApplicationStates;
+use core_src::server::console::start_reading;
 
-static enableStop: bool = true;
 
 fn main() {
-    let mut srv = app_src::server::services::http_server::HttpServer {
+    let http_server = app_src::server::services::http_server::HttpServer {
         ip: String::from("0.0.0.0"),
         port: 8090
     };
     
-    let initialState = ApplicationStates { shouldExit: false, exitMessage: String::from("") };
-    let data = Arc::new(Mutex::new(initialState));
-    let dataRef = data.clone();
+    let inital_state    = ApplicationStates { should_exit: false, exit_message: String::from("") };
+    let shared_state    = Arc::new(Mutex::new(inital_state));
 
-    srv.start(dataRef);
-    thread::sleep(Duration::from_millis(50));
-    let dataRef = data.clone();
-
-    if enableStop {
-        srv.stop(dataRef);
-    }
-
-    thread::sleep(Duration::from_millis(50));
-
-    println!("Hello, world!");
+    println!("Welcome in WebRust, type /help for command list.");
+    start_reading(http_server, shared_state.clone());
 }

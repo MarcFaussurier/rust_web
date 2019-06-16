@@ -35,16 +35,16 @@ fn listen() -> Result<i16, std::io::Error> {
     
     let listener = TcpListener::bind("127.0.0.1:8090")?;
 
-    let shouldExit = false;
+    let should_exit = false;
 
     println!("Listening...");
 
-    while ! shouldExit {
+    while ! should_exit {
         for stream in listener.incoming() {
             println!("Got connexion");
             handle_client(stream?);
         }
-        if (shouldExit) {
+        if (should_exit) {
             break;
         }
     }
@@ -59,21 +59,25 @@ pub struct HttpServer {
 }
 
 impl HttpServer {
-    pub fn start(&mut self, dataRef: std::sync::Arc<std::sync::Mutex<ApplicationStates>>) {
-        let innerThread = thread::spawn(move || {
+    pub fn start(&mut self, shared_state: std::sync::Arc<std::sync::Mutex<ApplicationStates>>) -> &mut HttpServer  {
+        println!("starting server...");
+        thread::spawn(move || {
+            println!("started");
             loop {
-                let mut data = dataRef.lock().unwrap();
-                println!("CurrentValue = {}", data.shouldExit);
-                if  data.shouldExit {
+                let data = shared_state.lock().unwrap();
+                if  data.should_exit {
                     break
                 }
-                thread::sleep(Duration::from_millis(5));
             }
         });
+
+        return self;
     }
 
-    pub fn stop(&mut self, dataRef: std::sync::Arc<std::sync::Mutex<ApplicationStates>>) {
-        let mut data = dataRef.lock().unwrap();
-        data.shouldExit = true;   
+    pub fn stop(&mut self, shared_state: std::sync::Arc<std::sync::Mutex<ApplicationStates>>, exit_reason: String) -> &mut HttpServer {
+        let mut data = shared_state.lock().unwrap();
+        data.should_exit = true;   
+        data.exit_message = format!("Exiting ... [{}]", exit_reason);
+        return self;
     }
 }

@@ -1,6 +1,6 @@
-// pub mod server;
+pub mod server;
 
 pub struct ApplicationStates {
-    pub shouldExit: bool,
-    pub exitMessage: String
+    pub should_exit: bool,
+    pub exit_message: String
 }
