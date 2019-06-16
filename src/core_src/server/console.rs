@@ -1,6 +1,6 @@
 use std::io;
 use std::io::prelude::*;
-use crate::app_src::server::services::http_server::HttpServer;
+use crate::core_src::server::http_server::HttpServer;
 use crate::core_src::ApplicationStates;
 
 pub fn push_command_into_list(command: String/*, vec: &mut Vec<String>*/){
@@ -35,12 +35,17 @@ pub fn do_action (line: String, http_server: &mut HttpServer, shared_state: std:
 
         "/stop" => {
             println!("You asked for stop.");
-            return http_server.stop(shared_state, String::from("User asked to").clone());
+            return http_server.stop(shared_state, String::from("User asked to stop"));
+        }
+
+        "/resume" => {
+            println!("You asked for server server resuming.");
+            return http_server.resume(shared_state);
         }
 
         "/pause" => {
             println!("You asked for pause.");
-            return http_server;
+            return http_server.pause(shared_state);
         }
 
         "/exit" => {
