@@ -2,9 +2,7 @@ use std::net::{TcpListener, TcpStream};
 use std::io::{Read, Write};
 use std::thread;
 use crate::core_src::ApplicationStates;
-use std::time::{Duration, Instant};
-extern crate chrono;
-use chrono::*;
+use std::time::Instant;
 
 pub struct HttpServer {
     pub ip: String,
