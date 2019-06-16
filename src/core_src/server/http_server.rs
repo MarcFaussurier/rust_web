@@ -15,7 +15,7 @@ fn handle_read(mut stream: &TcpStream) {
         Ok(_) => {
             let req_str = String::from_utf8_lossy(&buf);
             println!("{}", req_str);
-            },
+        },
         Err(e) => println!("Unable to read stream: {}", e),
     }
 }
@@ -58,6 +58,7 @@ impl HttpServer {
                             for stream in e.incoming() {
                                 match stream {
                                     Ok(stream) => {
+                                        // todo : handle the client inside a thread pool
                                         handle_client(stream);
                                     }
                                     Err(e) => { println!("error {:?}", e); }
@@ -121,7 +122,7 @@ impl HttpServer {
                     let start = Instant::now();
                     println!("Sent Hello, awaiting reply...");
 
-                    let mut data = [0 as u8; 6]; // using 6 byte buffer
+                    let mut data = [0]; // using 6 byte buffer
                     match stream.read_exact(&mut data) {
                         Ok(_) => {
                             let duration = start.elapsed();
