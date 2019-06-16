@@ -24,8 +24,8 @@ pub fn do_action (line: String, http_server: &mut HttpServer, shared_state: std:
         }
 
         "/status" => {
-            println!("You asked for start.");
-            return http_server;
+            println!("You asked for status.");
+            return http_server.status(shared_state);
         }
 
         "/start" => {
@@ -50,6 +50,8 @@ pub fn do_action (line: String, http_server: &mut HttpServer, shared_state: std:
 
         "/exit" => {
             println!("You asked for exit.");
+            let http_server = http_server.stop(shared_state, String::from("User asked to stop"));
+            ::std::process::exit(0);
             return http_server;
         }
 
