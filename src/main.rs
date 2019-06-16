@@ -1,12 +1,26 @@
-mod server;
+mod app_src;
+mod core_src;
+
+use std::thread;
+use std::sync::{mpsc, Arc, Mutex};
+use std::time::Duration;
+use core_src::ApplicationStates;
 
 fn main() {
-    let mut HttpServer = server::services::http_server::HttpServer {
-        ip: String::from("0.0.0.0")
+    let mut srv = app_src::server::services::http_server::HttpServer {
+        ip: String::from("0.0.0.0"),
+        port: 8090
     };
     
+    let initialState = ApplicationStates { shouldExit: false, exitMessage: String::from("") };
+    let data = Arc::new(Mutex::new(initialState));
+    let dataRef = data.clone();
 
-    HttpServer.start();
+    srv.start(dataRef);
+    thread::sleep(Duration::from_millis(50));
+    let dataRef = data.clone();
+
+    srv.stop(dataRef);
 
     println!("Hello, world!");
 }

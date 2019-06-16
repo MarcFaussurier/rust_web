@@ -1,6 +1,12 @@
 use std::net::{TcpListener, TcpStream};
 use std::io::{Read, Write};
-
+use std::sync::{Arc};
+use std::sync::mpsc::channel;
+use std::thread;
+use std::sync::mpsc;
+use std::time::Duration;
+use crate::core_src::ApplicationStates;
+/*
 fn handle_read(mut stream: &TcpStream) {
     let mut buf = [0u8 ;4096];
     match stream.read(&mut buf) {
@@ -44,21 +50,30 @@ fn listen() -> Result<i16, std::io::Error> {
     }
 
     return Ok(5);
-}
+}s
+*/
 
 pub struct HttpServer {
-    pub ip: String
+    pub ip: String,
+    pub port: u16,
 }
 
 impl HttpServer {
-    pub fn start(self) {
-       match listen() {
-            Ok(t)  => print!("Success"),
-            Err(e) => print!("Err {}", e),
-        }
+    pub fn start(&mut self, dataRef: std::sync::Arc<std::sync::Mutex<ApplicationStates>>) {
+        let innerThread = thread::spawn(move || {
+            loop {
+                let mut data = dataRef.lock().unwrap();
+                println!("CurrentValue = {}", data.shouldExit);
+                if  data.shouldExit {
+                    break
+                }
+                thread::sleep(Duration::from_millis(5));
+            }
+        });
     }
 
-    pub fn stop(self) {
-
+    pub fn stop(&mut self, dataRef: std::sync::Arc<std::sync::Mutex<ApplicationStates>>) {
+        let mut data = dataRef.lock().unwrap();
+        data.shouldExit = true;   
     }
 }
