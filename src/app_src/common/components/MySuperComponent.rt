@@ -1,0 +1,49 @@
+# +*
+MySuperComponent {
+    use crate::sub::MySuperChild;
+
+    states {
+        name ∈ ℕ→  # a string is a vector of ints 
+        age ∈ ℕ,  birth_day ∈ date ∈ ℕ→|6| # a date is a vector if int with a fixed cardinal 
+        interval ⊂ ℝ   ∧   -3 < interval < 4 
+    }
+
+    f(x) ↦ ℝ {
+        3 * π 
+        ______
+
+        2√ x
+    }
+
+    g(x) ↦ ℝ {
+        3 * π 0
+        ______
+
+        x _ (1/2)
+    }
+
+    render {
+        name := "somewho"
+        let str1 := "Hello World" # strongly typed with automatic type guessing
+        let str := {
+            Hello World
+        } 
+
+        let euros = 1$ * 100 / 1€  # working
+
+        let super_child = MySuperChild {x: 9, y: 2}
+
+        <div>
+            @super_child.render.x }     # this comment should not work but anyway this display the x let pf render func
+            @super_child.render }       # this comment should not work but anyway this display html output
+            { @super_child.render }
+            { @∀ x ∈ str1, x * x }
+            Hello, { @name } !
+            You are { @age } years old
+            Your f(birth_day) = { @f(birth_day) patate @fbirth_day }
+            { @str }
+
+            {@draw_function(f, { interval := [0, 9], zoom := 3, point := (3, -3) })}
+        </div>
+    }
+}
