@@ -6,6 +6,8 @@ use std::sync::{mpsc, Arc, Mutex};
 use std::time::Duration;
 use core_src::ApplicationStates;
 
+static enableStop: bool = true;
+
 fn main() {
     let mut srv = app_src::server::services::http_server::HttpServer {
         ip: String::from("0.0.0.0"),
@@ -20,7 +22,11 @@ fn main() {
     thread::sleep(Duration::from_millis(50));
     let dataRef = data.clone();
 
-    srv.stop(dataRef);
+    if enableStop {
+        srv.stop(dataRef);
+    }
+
+    thread::sleep(Duration::from_millis(50));
 
     println!("Hello, world!");
 }
