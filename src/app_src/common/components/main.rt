@@ -1,4 +1,4 @@
-MySuperComponent {
+Main {
     # ↣ injection 
     # ↠ surjection 
     # ⇆ bijection 
@@ -32,7 +32,7 @@ MySuperComponent {
         x _ (1/2)
     }
 
-    render ↦ ↪ℕ {
+    main ↦ ↪ℕ {
         name := "somewho"
         let str1 := "Hello World" # strongly typed with automatic type guessing
         let str := {
