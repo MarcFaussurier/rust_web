@@ -2,24 +2,17 @@ use std::io;
 use std::io::prelude::*;
 use crate::core_src::server::http_server::HttpServer;
 use crate::core_src::ApplicationStates;
-
-pub fn push_command_into_list(command: String/*, vec: &mut Vec<String>*/){
-
-}
-
-macro_rules! register_cmd {
-($name: expr) => {
-        // todo : push string into a static vector and use it inside the /help command
-        // $crate::core_src::server::console::push_command_into_list(stringify!($name));??
-        ($name)
-    }
-}
-
+use crate::core_src::component_renderer::parser::parse_source_code;
 
 pub fn do_action (line: String, http_server: &mut HttpServer, shared_state: std::sync::Arc<std::sync::Mutex<ApplicationStates>>) -> &mut HttpServer {
     match line.as_str() {
         "/help" => {
-            println!("You asked for help. Current commands are: /status /start /stop /pause /exit");
+            println!("You asked for help. Current commands are: /status /start /stop /pause /exit /parse_comoponents");
+            return http_server;
+        }
+
+        "/parse_components" => {
+            parse_source_code(&mut String::from("MySuperComponent.rt"));
             return http_server;
         }
 

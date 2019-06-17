@@ -1,27 +1,38 @@
 MySuperComponent {
+    # ↣ injection 
+    # ↠ surjection 
+    # ⇆ bijection 
+    # ↦ relation
+
+    # ↪ non-linear vector 
+    # ↗ linear vector
+
     use crate::sub::MySuperChild;
 
-    states {
-        name ∈ ℕ→                                       # a string is a vector of ints 
-        age ∈ ℕ,  birth_day ∈ date ∈ |(ℕ ... )| = 5     # a date is a list of positive numbers with a fixed len 
-        interval ⊂ ℝ   ∧   -3 < interval < 4            # interval between -3 and 4 (both exlucded) 
+    let name ∈ ↪ℕ                                       
+        age ∈ ℕ 
+        birth_day ∈ ↪ℕ_5                    
+        interval ⊂ ℝ   ∧   -3 < interval < 4          
+
+    f:  ℕ → ℝ 
+        x ↦ ℝ
+    {
+            3 * π 
+            ______
+
+            2√ x
     }
 
-    f(x) ↦ ℝ {
-        3 * π 
-        ______
-
-        2√ x
-    }
-
-    g(x) ↦ ℝ {
-        3 * π 0
+    g:  N → ℝ
+        x ↦ ℝ
+    {
+        3 * 2π 
         ______
 
         x _ (1/2)
     }
 
-    render {
+    render ↦ ↪ℕ {
         name := "somewho"
         let str1 := "Hello World" # strongly typed with automatic type guessing
         let str := {
