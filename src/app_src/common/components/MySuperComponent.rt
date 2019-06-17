@@ -1,11 +1,10 @@
-# +*
 MySuperComponent {
     use crate::sub::MySuperChild;
 
     states {
-        name ∈ ℕ→  # a string is a vector of ints 
-        age ∈ ℕ,  birth_day ∈ date ∈ ℕ→|6| # a date is a vector if int with a fixed cardinal 
-        interval ⊂ ℝ   ∧   -3 < interval < 4 
+        name ∈ ℕ→                                       # a string is a vector of ints 
+        age ∈ ℕ,  birth_day ∈ date ∈ |(ℕ ... )| = 5     # a date is a list of positive numbers with a fixed len 
+        interval ⊂ ℝ   ∧   -3 < interval < 4            # interval between -3 and 4 (both exlucded) 
     }
 
     f(x) ↦ ℝ {
