@@ -1,0 +1,27 @@
+# hardware related configuration
+user_cap:           20000
+thread_count:       4 # (+ 7 system thread)
+thread_max_count:   4
+# web based management tool
+mgr_user:           admin
+mgr_pass:           admin123
+mgr_ssl_only:       true
+# database credits
+mssql_ip:           127.0.0.1
+mssql_port:         1433
+mssql_user:         sa
+mssql_pass:         "123456"
+mssql_database:     RustWeb
+# network services
+#   - http
+http_ip:            0.0.0.0
+http_port:          80
+#   - htts
+https_ip:           0.0.0.0
+https_port:         443
+#   - websocket
+ws_ip:              0.0.0.0
+ws_port:            30880
+#   - secure websocket
+wss_ip:             0.0.0.0
+wss_port:           30890
