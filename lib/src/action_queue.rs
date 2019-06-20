@@ -1,1 +1,4 @@
-pub type ActionQueue = Vec<fn ()>;
+use crate::action::DeferedAction;
+use std::sync::{Arc, Mutex};
+
+pub type ActionQueue = Vec<Arc<Mutex<DeferedAction>>>;
