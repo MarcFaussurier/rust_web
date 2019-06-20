@@ -5,6 +5,7 @@ use std::sync::{Mutex, Arc};
 use lib::config;
 use lib::server;
 use lib::{https_listener, http_listener, wss_listener, ws_listener, console_reader, worker_pool, worker_pool_listener};
+use lib::action::DeferedAction; 
 
 static NTHREADS: i32 = 10;
 
@@ -64,27 +65,25 @@ fn main() {
       }));
    }
 
-
+let x: i64 = 0;
    loop {
       {
       let mut data = shared_server_state.lock().unwrap();
       if data.stopped {
          break;
       }
-   
       std::thread::sleep_ms(200);
       println!("sending action....");
-
-      data.worker_pool.action_queue.push(|| {
-         println!("action");
-      });
-
-      println!("sent....");
+      let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE1"); }}));
+      data.worker_pool.action_queue.push(action);
+      let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE2");  }}));
+      data.worker_pool.action_queue.push(action);
+      let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE3"); }}));
+      data.worker_pool.action_queue.push(action);
+      let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE4"); }}));
+      data.worker_pool.action_queue.push(action);
       }      
       std::thread::sleep_ms(200);
-
-
-
    }
 
 
