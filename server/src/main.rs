@@ -1,11 +1,14 @@
 extern crate lib;
 
+pub mod controllers;
+
 use std::thread;
 use std::sync::{Mutex, Arc};
 use lib::config;
 use lib::server;
 use lib::{https_listener, http_listener, wss_listener, ws_listener, console_reader, worker_pool, worker_pool_listener};
-use lib::action::DeferedAction; 
+use lib::action::DeferedAction;
+use lib::controller_stack::ControllerStack;
 
 static NTHREADS: i32 = 10;
 static TEST_EV_LOOP: bool = false;
@@ -23,6 +26,14 @@ fn main() {
    };
    let mut shared_server_state = Arc::new(Mutex::new(server_state));
    let mut shared_config = Arc::new(Mutex::new(config_instance));
+
+   let mut controllers: ControllerStack = ControllerStack {
+       controllers: vec![]
+   };
+
+   crate::controllers::some::register(&mut controllers);
+    println!("Controller count: {}", controllers.controllers.len());
+
     // Make a vector of thread for all main threads (a thread pool is a main thread that uses child threads)
    let mut main_threads = vec![];
 
@@ -41,7 +52,7 @@ fn main() {
    }{
       let a = shared_config.clone();
       let b = shared_server_state.clone();
-   
+
       main_threads.push(thread::spawn(move || {
          https_listener::listen(a, b);
       }));
@@ -82,7 +93,7 @@ let x: i64 = 0;
          data.worker_pool.action_queue.push(action);
          let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE4"); }}));
          data.worker_pool.action_queue.push(action);
-         }   
+         }
       }
       std::thread::sleep_ms(200);
    }

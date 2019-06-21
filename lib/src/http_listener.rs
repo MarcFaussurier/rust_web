@@ -4,7 +4,7 @@ use crate::server;
 use std::thread;
 use std::net::{TcpListener, TcpStream, Shutdown};
 use std::io::{Read, Write};
-use crate::http_message::{read, write};
+use crate::http_message::{read, write, parse_first_line};
 struct HttpListener {
 
 }
@@ -16,6 +16,11 @@ fn handle_client(mut stream: TcpStream) {
         Ok(v) => {
             println!("{} ", v);
             let output = read(v);
+
+            println!("url: {}", parse_first_line(&output).uri);
+            println!("type: {}", parse_first_line(&output).req_type);
+            println!("protocol: {}", parse_first_line(&output).protocol);
+
             println!("{}", write(output));
         },
         Err(e) => {

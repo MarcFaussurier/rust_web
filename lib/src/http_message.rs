@@ -1,12 +1,50 @@
 pub struct Header {
-    key: String,
-    value: String
+    pub key: String,
+    pub value: String
 }
 
 pub struct HttpMessage {
-    request_line: String,
-    headers: Vec<Header>,
-    body: String
+    pub first_line: String,
+    pub headers: Vec<Header>,
+    pub body: String
+}
+
+pub struct Request {
+    pub req_type: String,
+    pub uri: String,
+    pub protocol: String
+}
+
+pub fn parse_first_line(message: &HttpMessage) -> Request {
+    let mut output: Request = Request {
+        req_type: String::from(""),
+        uri: String::from(""),
+        protocol: String::from("")
+    };
+    let mut first_space = true;
+    let mut buf = String::from("");
+    let mut pos = 0;
+
+    for x in message.first_line.chars() {
+        if x == ' ' {
+            if first_space {
+                output.req_type = buf.clone();
+                buf = String::from("");
+            } else {
+                output.uri = buf.clone();
+                buf = String::from("");
+            }
+            first_space = false;
+        } else {
+            buf = format!("{}{}", buf, x);
+            if pos == (message.first_line.len() - 1) {
+                output.protocol = buf.clone();
+                buf = String::from("");
+            }
+        }    
+        pos = pos + 1;
+    }
+    return output;
 }
 
 pub fn read(text: String) -> HttpMessage {
@@ -20,7 +58,7 @@ pub fn read(text: String) -> HttpMessage {
 
 
     let mut output = HttpMessage {
-        request_line: String::from(""),
+        first_line: String::from(""),
         headers: vec![],
         body: String::from("")
     };
@@ -32,7 +70,7 @@ pub fn read(text: String) -> HttpMessage {
                 break;
             }
             if is_first_line {
-                output.request_line = current_key_buffer.clone();
+                output.first_line = current_key_buffer.clone();
                 current_key_buffer = String::from("");
             } else {
                 if !waiting_for_key { 
@@ -72,7 +110,7 @@ pub fn read(text: String) -> HttpMessage {
 
 pub fn write(message: HttpMessage) -> String {
     let mut output = String::from("");
-    output = format!("{}{}\n", output, message.request_line);
+    output = format!("{}{}\n", output, message.first_line);
     for x in message.headers.iter() {
         output = format!("{}{}:{}\n", output, x.key, x.value);
     }
