@@ -8,7 +8,7 @@ use lib::{https_listener, http_listener, wss_listener, ws_listener, console_read
 use lib::action::DeferedAction; 
 
 static NTHREADS: i32 = 10;
-
+static TEST_EV_LOOP: bool = false;
 fn main() {
    // server datas
    let config_instance: config::ServerConfig = config::read(String::from("dev"));
@@ -67,22 +67,23 @@ fn main() {
 
 let x: i64 = 0;
    loop {
-      {
-      let mut data = shared_server_state.lock().unwrap();
-      if data.stopped {
-         break;
+      if TEST_EV_LOOP {
+         {let mut data = shared_server_state.lock().unwrap();
+         if data.stopped {
+            break;
+         }
+         std::thread::sleep_ms(200);
+         println!("sending action....");
+         let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE1"); }}));
+         data.worker_pool.action_queue.push(action);
+         let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE2");  }}));
+         data.worker_pool.action_queue.push(action);
+         let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE3"); }}));
+         data.worker_pool.action_queue.push(action);
+         let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE4"); }}));
+         data.worker_pool.action_queue.push(action);
+         }   
       }
-      std::thread::sleep_ms(200);
-      println!("sending action....");
-      let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE1"); }}));
-      data.worker_pool.action_queue.push(action);
-      let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE2");  }}));
-      data.worker_pool.action_queue.push(action);
-      let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE3"); }}));
-      data.worker_pool.action_queue.push(action);
-      let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE4"); }}));
-      data.worker_pool.action_queue.push(action);
-      }      
       std::thread::sleep_ms(200);
    }
 

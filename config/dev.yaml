@@ -15,7 +15,7 @@ mssql_database:     RustWeb
 # network services
 #   - http
 http_ip:            0.0.0.0
-http_port:          80
+http_port:          8060
 #   - htts
 https_ip:           0.0.0.0
 https_port:         443
