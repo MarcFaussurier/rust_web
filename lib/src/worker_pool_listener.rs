@@ -4,7 +4,7 @@ use crate::server;
 use crate::worker::Worker;
 use crate::action;
 use crate::action_queue;
-use crate::action::DeferedAction;
+use crate::action::ConcurrentAction;
 
 struct WorkerPoolListener {
 
@@ -32,7 +32,7 @@ pub fn listen(config_instance: Arc<Mutex<config::ServerConfig>>, shared_server_s
                     let mut minWorker = 0;
                     let mut y = 0;
                     println!("trying to find min worker...");
-                    for x in data.worker_pool.workers.iter() {       
+                    for x in data.worker_pool.workers.iter() {
                         {
                             {let mut current_worker = x.lock().unwrap();
                                 {
@@ -52,19 +52,19 @@ pub fn listen(config_instance: Arc<Mutex<config::ServerConfig>>, shared_server_s
                     println!("min worker: {}", minWorker);
                     // if target worker is busy     and     if we can still create new thread
                     if min_worker.action_queue.len() > 0 && max_worker_count > data.worker_pool.workers.len() as u64 {
-                        // todo :: add temporary thread support until 
+                        // todo :: add temporary thread support until
                         println!("todo :: add temporary thread support until ");
                     }
                     // else we can proceed the action
                     else {
                         println!("processing...");
                         // push the action to the raget worker queue
-                        let mut v: Arc<Mutex<DeferedAction>> = data.worker_pool.action_queue[0].clone();
+                        let mut v: Arc<Mutex<ConcurrentAction>> = data.worker_pool.action_queue[0].clone();
                         min_worker.action_queue.push(v);
                         // remove current action
                         remove_first = true;
-                    } 
-                } 
+                    }
+                }
                 // thread pool action  queue is now empty
                 else {
                  //   println!("empty!");
@@ -76,7 +76,7 @@ pub fn listen(config_instance: Arc<Mutex<config::ServerConfig>>, shared_server_s
                 {
                     let mut c = shared_server_state.clone();
                     let mut data = c.lock().unwrap();
-                    data.worker_pool.action_queue.remove(0);   
+                    data.worker_pool.action_queue.remove(0);
                 }
             }
 

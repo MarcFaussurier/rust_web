@@ -1,6 +1,5 @@
 use crate::worker;
 use crate::config;
-use crate::action::DeferedAction;
 use crate::action_queue;
 use crate::worker::{Worker};
 use std::thread;
@@ -28,23 +27,23 @@ impl WorkerPool {
                 loop {
                     let mut data = worker.lock().unwrap();
 
-                    // if there are some action to proceed 
+                    // if there are some action to proceed
                     if data.action_queue.len() > 0 {
                         // we retrive and proceed the first one
                         {
                             let mut action = data.action_queue[0].lock().unwrap();
-                            (action.callback)();
+                            action.invoke();
                         }
                         // then we remove it from the stack
                         data.action_queue.remove(0);
-                    } 
+                    }
                     // there is no action in the queue
                     else {
 
-                    }   
+                    }
                 }
             });
-        } 
+        }
     }
 }
 
