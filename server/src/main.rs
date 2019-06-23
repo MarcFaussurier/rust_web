@@ -7,12 +7,30 @@ use std::sync::{Mutex, Arc};
 use lib::config;
 use lib::server;
 use lib::{https_listener, http_listener, wss_listener, ws_listener, console_reader, worker_pool, worker_pool_listener};
-use lib::action::DeferedAction;
+use lib::action::ConcurrentAction;
 use lib::controller_stack::ControllerStack;
 
 static NTHREADS: i32 = 10;
 static TEST_EV_LOOP: bool = false;
+
 fn main() {
+
+  /* struct Instr(Box<Fn() -> ()>);
+
+   fn gen_run_inc() -> Box<Fn() -> ()> {
+      Box::new(move || {
+         println!("toto");
+      })
+   }
+
+   fn main() {
+      let instructions = vec![Instr(gen_run_inc())];
+      for instr in &instructions {
+         instr.0();
+      }
+      println!("end");
+   }
+*/
    // server datas
    let config_instance: config::ServerConfig = config::read(String::from("dev"));
    let mut server_state = server::ServerState {
@@ -75,29 +93,6 @@ fn main() {
          console_reader::listen(a, b);
       }));
    }
-
-let x: i64 = 0;
-   loop {
-      if TEST_EV_LOOP {
-         {let mut data = shared_server_state.lock().unwrap();
-         if data.stopped {
-            break;
-         }
-         std::thread::sleep_ms(200);
-         println!("sending action....");
-         let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE1"); }}));
-         data.worker_pool.action_queue.push(action);
-         let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE2");  }}));
-         data.worker_pool.action_queue.push(action);
-         let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE3"); }}));
-         data.worker_pool.action_queue.push(action);
-         let action = Arc::new(Mutex::new(DeferedAction{ callback: || { println!("PATATE4"); }}));
-         data.worker_pool.action_queue.push(action);
-         }
-      }
-      std::thread::sleep_ms(200);
-   }
-
 
     for child in main_threads {
         // Wait for the thread to finish. Returns a result.
